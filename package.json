@@ -1,0 +1,14 @@
+{
+  "name": "@francisschiavo/search-autocomplete",
+  "version": "1.0.0",
+  "description": "Autocomplete WebComponent",
+  "main": "auto-complete.js",
+  "keywords": [
+    "autocomplete",
+    "webcomponent",
+    "rails"
+  ],
+  "author": "Francis Schiavo",
+  "license": "MIT",
+  "homepage": "https://github.com/francis-schiavo/auto-complete"
+}
