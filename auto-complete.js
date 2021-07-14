@@ -7,7 +7,11 @@ class AutoComplete extends HTMLInputElement {
     this.addEventListener('keydown', this.onKeyDown.bind(this));
     this.addEventListener('keyup', this.onKeyUp.bind(this));
 
-    this.hiddenInput = this.parentElement.appendNewChild('input', { type: 'hidden', name: this.name, value: this.value });
+    this.hiddenInput = document.createElement('input');
+    this.hiddenInput.type = 'hidden';
+    this.hiddenInput.name = this.name;
+    this.hiddenInput.value = this.value;
+    this.parentElement.appendChild(this.hiddenInput);
     this.removeAttribute('name');
     this.value = this.getAttribute('display-value');
 
