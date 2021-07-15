@@ -6,6 +6,7 @@ class AutoComplete extends HTMLInputElement {
   connectedCallback() {
     this.addEventListener('keydown', this.onKeyDown.bind(this));
     this.addEventListener('keyup', this.onKeyUp.bind(this));
+    this.addEventListener('blur', this.onBlur.bind(this));
 
     this.hiddenInput = document.createElement('input');
     this.hiddenInput.type = 'hidden';
@@ -14,7 +15,6 @@ class AutoComplete extends HTMLInputElement {
     this.parentElement.appendChild(this.hiddenInput);
     this.removeAttribute('name');
     this.value = this.getAttribute('display-value');
-
 
     this.items = document.createElement('ul');
     this.items.style.display = 'none';
@@ -47,14 +47,16 @@ class AutoComplete extends HTMLInputElement {
     this.updateList(data);
   }
 
-  updateList(data) {
-    this.items.innerHTML = '';
+  updateListPosition() {
     let rect = this.getBoundingClientRect();
     this.items.style.width = rect.width + 'px';
     this.items.style.left = rect.left + 'px';
     this.items.style.top = rect.bottom + 'px';
-    this.items.style.display = 'inline-block';
 
+  }
+
+  updateList(data) {
+    this.items.innerHTML = '';
     for (let item of data) {
       let li = document.createElement('li');
       li.dataset.key = item.id;
@@ -63,6 +65,18 @@ class AutoComplete extends HTMLInputElement {
       this.items.appendChild(li);
     }
     this.selectedItemIndex = 0;
+    this.items.style.display = 'inline-block';
+    this.updateListPosition();
+  }
+
+  onBlur() {
+    if (this._timeout) {
+      window.clearTimeout(this._timeout);
+    }
+
+    this.items.style.display = 'none';
+    this.value = '';
+    this.hiddenInput.value = '';
   }
 
   get url() {
@@ -125,12 +139,14 @@ class AutoComplete extends HTMLInputElement {
         }
       }
     } else {
-      if (this.value.length < this.minLength) {
-        return;
-      }
+      this.items.style.display = 'none';
 
       if (this._timeout) {
         window.clearTimeout(this._timeout);
+      }
+
+      if (this.value.length < this.minLength) {
+        return;
       }
 
       this._timeout = window.setTimeout(this.fetchData.bind(this), 500);
