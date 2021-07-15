@@ -23,6 +23,7 @@ class AutoComplete extends HTMLInputElement {
     this.items.addEventListener('click', this.onItemClick.bind(this));
 
     this.parentElement.appendChild(this.items);
+    this.lastUsedTerm = '';
   }
 
   set selectedItemIndex(value) {
@@ -37,6 +38,7 @@ class AutoComplete extends HTMLInputElement {
   }
 
   async fetchData() {
+    this.lastUsedTerm = this.value;
     let response = await fetch(`${this.url}?term=${encodeURIComponent(this.value)}`, {
       cache: 'reload',
       headers: {'Content-Type': 'application/json'},
@@ -74,9 +76,9 @@ class AutoComplete extends HTMLInputElement {
       window.clearTimeout(this._timeout);
     }
 
-    this.items.style.display = 'none';
     this.value = '';
     this.hiddenInput.value = '';
+    window.setTimeout(_ => { this.items.style.display = 'none'; }, 100)
   }
 
   get url() {
@@ -139,6 +141,10 @@ class AutoComplete extends HTMLInputElement {
         }
       }
     } else {
+      if (this.value === this.lastUsedTerm) {
+        return
+      }
+
       this.items.style.display = 'none';
 
       if (this._timeout) {
