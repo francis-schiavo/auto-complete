@@ -76,8 +76,6 @@ class AutoComplete extends HTMLInputElement {
       window.clearTimeout(this._timeout);
     }
 
-    this.value = '';
-    this.hiddenInput.value = '';
     window.setTimeout(_ => { this.items.style.display = 'none'; }, 100)
   }
 
